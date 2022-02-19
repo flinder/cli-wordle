@@ -1,31 +1,44 @@
 import os
 import pickle
+import re
+import requests
 from wordle import Wordle
 
-RAW_DATA_DIR = '../data/raw_wordlists'
-PROCESSED_DATA_DIR = '../data/processed_word_lists'
+WORD_LIST_URLS = {
+    'en_US': 'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt',
+    'de_DE': 'https://raw.githubusercontent.com/davidak/wortliste/master/wortliste.txt'
+}
 
 
-def preprocess_word_list(input_file: str, output_file: str, word_lengths: list[int]) -> None:
+def de_special_chars(word):
+    special_chars = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'ß': 'ss'}
+    for char, replacement in special_chars.items():
+        word = re.sub(char, replacement, word)
+
+
+def preprocess_word_list(word_list_url: str, output_file: str, word_lengths: list[int],
+                         language: str) -> None:
 
     lens = set(word_lengths)
     out = {length: [] for length in word_lengths}
-    # TODO: only words with [A-Za-z] no special characters
 
-    with open(input_file) as infile:
-        for line in infile:
-            line = line.strip('\n')
-            if (word_length := len(line)) in lens:
-                out[word_length].append(line.lower())
+    word_list = requests.get(word_list_url).content.decode('utf-8').split('\n')
+    for line in word_list:
+        line = line.strip('\r\n')
+        if (word_length := len(line)) in lens and line.isalpha():
+            word = de_special_chars(line.lower()) if language == 'de_DE' else line.lower()
+            out[word_length].append(word)
 
+    print([f'{x}: {len(out[x])}' for x in out])
     with open(output_file, 'wb') as outfile:
         pickle.dump(out, outfile)
 
 
 if __name__ == '__main__':
 
-    for language in Wordle.SUPPORTED_LANGUAGES:
-        print(f'Processing {language}')
-        preprocess_word_list(input_file=os.path.join(RAW_DATA_DIR, language + '.txt'),
-                             output_file=os.path.join(PROCESSED_DATA_DIR, language + '.pkl'),
-                             word_lengths=Wordle.SUPPORTED_LENGTHS)
+    for lang, url in WORD_LIST_URLS.items():
+        print(f'Processing {lang}')
+        preprocess_word_list(word_list_url=url,
+                             output_file=os.path.join('../data/', lang + '.pkl'),
+                             word_lengths=Wordle.SUPPORTED_LENGTHS,
+                             language=lang)
