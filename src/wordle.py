@@ -14,6 +14,8 @@ class Wordle:
     SUPPORTED_LANGUAGES = ['en_US', 'de_DE']
     SUPPORTED_LENGTHS = [3, 4, 5, 6, 7]
     DATA_DIR = 'data/'
+    MAX_TRIES = 5
+    CMDS = {'solve': '!solve', 'quit': '!quit', 'restart': '!restart'}
 
     def __init__(self, word_length: int = 5, language: str = 'en_US', seed: int = None, solution: str = None) -> None:
         assert language in self.SUPPORTED_LANGUAGES
@@ -70,11 +72,11 @@ class Wordle:
     def play(self):
         print(f'Game random seed: {self.seed}')
         tries = 0
-        while not self.solved:
+        while not self.solved and tries <= self.MAX_TRIES:
             _input = input(f'{self.word_length} letters> ')
-            if _input == '!solve':
+            if _input == self.CMDS['solve']:
                 break
-            if _input == '!quit':
+            if _input == self.CMDS['quit']:
                 sys.exit()
             tries += 1
             try:
@@ -97,7 +99,6 @@ def print_colored_response(submission: str, coding: list[int]) -> None:
         else:
             text = text + colored(letter, 'grey', f'on_{color}')
     print(text)
-
 
 
 if __name__ == '__main__':
