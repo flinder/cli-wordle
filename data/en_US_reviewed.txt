@@ -44,7 +44,6 @@ angle
 angry
 anime
 annex
-annie
 apart
 apple
 apply
@@ -460,7 +459,6 @@ gates
 gauge
 genes
 genre
-ghana
 ghost
 giant
 gifts
@@ -539,7 +537,6 @@ howto
 human
 humor
 icons
-idaho
 ideal
 ideas
 image
@@ -1197,7 +1194,6 @@ vista
 vital
 vocal
 voice
-volvo
 voted
 votes
 wages
@@ -1252,7 +1248,6 @@ wrist
 write
 wrong
 wrote
-xerox
 yacht
 yards
 years
@@ -1261,5 +1256,4 @@ yield
 young
 yours
 youth
-yukon
 zones
