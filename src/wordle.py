@@ -44,7 +44,7 @@ class Wordle:
 
     def _assert_correct_spelling(self, word: str) -> None:
         assert self.dictionary.check(word) or self.dictionary.check(word.capitalize()), \
-            f'{word} not found in {self.language} dictionary'
+            f'{word} not found in {self.language} dictionary.'
 
     def _validate_input(self, word: str):
         self._assert_correct_word_length(word)
@@ -67,12 +67,9 @@ class Wordle:
         return response
 
     def play(self):
-        print('*'*50)
-        print('WORDLE')
-        print('*'*50)
-        print(f'Selected language: {self.language}, number of tries: {self.MAX_TRIES}.')
-        print(f'Game random seed: {self.seed}')
-        print('\n')
+        print('*'*50 + '\n' + ' '*21 + 'WORDLE\n' + '*'*50)
+        print(f'Selected language: {self.language}, number of tries: {self.MAX_TRIES}. Game random seed: {self.seed}')
+        print(f'Type {self.CMDS["quit"]} to quit or {self.CMDS["solve"]} to solve.\n')
         tries = 0
         while not self.solved and tries <= self.MAX_TRIES:
             _input = input(f'Type a {self.WORD_LENGTH} letter word> ')
