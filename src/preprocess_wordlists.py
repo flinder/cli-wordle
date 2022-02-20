@@ -1,11 +1,12 @@
 import os
 import re
 import requests
+import numpy as np
 from wordle import Wordle
 
 WORD_LIST_URLS = {
     'en_US': 'https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english.txt',
-    'de_DE': 'https://raw.githubusercontent.com/davidak/wortliste/master/wortliste.txt'
+    'de_DE': 'https://raw.githubusercontent.com/dys2p/wordlists-de/main/de-7776-v1.txt'
 }
 
 
