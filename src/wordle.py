@@ -6,6 +6,7 @@ import enchant
 from termcolor import colored
 
 
+
 class Wordle:
     EXACT_MATCH = 'green'
     MATCH = 'yellow'
@@ -23,6 +24,7 @@ class Wordle:
         self.solution = solution
         self.language = language
         self.solved = False
+        self.alphabet = {l: None for l in 'abcdefghijklmnopqrstuvwxyz'}
 
         with open(os.path.join(self.DATA_DIR, self.language + '_reviewed.txt')) as infile:
             self.word_list = [word.strip('\n') for word in infile.readlines()]
@@ -80,7 +82,8 @@ class Wordle:
                 sys.exit()
             try:
                 coding = self.check_submission(_input)
-                print_colored_response(_input, coding)
+                self._update_alphabet(_input, coding)
+                self._print_colored_response(_input, coding)
             except AssertionError as e:
                 print(e)
                 continue
@@ -91,23 +94,38 @@ class Wordle:
         else:
             print(f'Congrats, you did it! In {tries} tries.')
 
+    def _update_alphabet(self, submission: str, coding: list[str]) -> None:
+        for letter, color in zip(submission, coding):
+            if self.alphabet[letter] == self.EXACT_MATCH and color == self.MATCH:
+                continue
+            self.alphabet[letter] = color
 
-def print_colored_response(submission: str, coding: list[str]) -> None:
-    text = ''
-    for letter, color in zip(submission, coding):
-        if color == Wordle.MISMATCH:
-            text = text + colored(letter, 'white', 'on_grey')
-        else:
-            text = text + colored(letter, 'grey', f'on_{color}')
-    print(text)
+    def _print_colored_response(self, submission: str, coding: list[str]) -> None:
+        text = ''
+        for letter, color in zip(submission, coding):
+            if color == self.MISMATCH:
+                text = text + colored(letter, 'white', 'on_grey')
+            else:
+                text = text + colored(letter, 'grey', f'on_{color}')
+
+        text = text + ' ' * 10
+
+        for letter in self.alphabet:
+            if self.alphabet[letter] is None:
+                text = text + ' ' + letter
+            elif self.alphabet[letter] == self.MISMATCH:
+                text = text + ' ' + colored(letter, 'white', 'on_grey')
+            else:
+                text = text + ' ' + colored(letter, 'grey', f'on_{self.alphabet[letter]}')
+
+        print(text)
 
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('--language', type=str, choices=['en_US', 'de_DE'], default='en_US')
-    parser.add_argument('--seed', type=int)
-    parser.add_argument('--solution', type=str)
-    #parser.add_argument('--hard', action='store_true', required=False)
+    parser.add_argument('--language', type=str, choices=['en_US', 'de_DE'], default='en_US', help='Language to play.')
+    parser.add_argument('--seed', type=int, help='Seed to play a specific word. Overridden by solution')
+    parser.add_argument('--solution', type=str, help='Set a specific solution word. Overrides seed.')
 
     args = parser.parse_args()
 
