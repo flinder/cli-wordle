@@ -4,7 +4,7 @@ import os
 import numpy as np
 import enchant
 from termcolor import colored
-
+from typing import List, Iterable
 
 
 class Wordle:
@@ -50,7 +50,7 @@ class Wordle:
         self._assert_correct_word_length(word)
         self._assert_correct_spelling(word)
 
-    def check_submission(self, submission: str) -> list[str]:
+    def check_submission(self, submission: str) -> List[str]:
         self._validate_input(submission)
 
         response = [self.MISMATCH] * self.WORD_LENGTH
@@ -91,13 +91,13 @@ class Wordle:
         else:
             print(f'Congrats, you did it! In {tries} tries.')
 
-    def _update_alphabet(self, submission: str, coding: list[str]) -> None:
+    def _update_alphabet(self, submission: str, coding: Iterable[str]) -> None:
         for letter, color in zip(submission, coding):
             if self.alphabet[letter] == self.EXACT_MATCH and color == self.MATCH:
                 continue
             self.alphabet[letter] = color
 
-    def _print_colored_response(self, submission: str, coding: list[str]) -> None:
+    def _print_colored_response(self, submission: str, coding: Iterable[str]) -> None:
         text = ''
         for letter, color in zip(submission, coding):
             if color == self.MISMATCH:
